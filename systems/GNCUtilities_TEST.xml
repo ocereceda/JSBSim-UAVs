@@ -1,0 +1,412 @@
+<?xml version="1.0"?>
+<system name="GNC Utilities"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSimSystem.xsd">
+
+<!-- ####################################################################### -->
+
+  <property> guidance/target_wp_latitude_rad </property>
+  <property> guidance/target_wp_longitude_rad </property>
+
+  <channel name="Guidance Waypoint Heading Director">
+
+    <fcs_function name="guidance/delta-lat-rad">
+      <!-- Delta latitude in radians -->
+      <function>
+        <difference>
+          <property> guidance/target_wp_latitude_rad </property>
+          <property> position/lat-gc-rad </property>
+        </difference>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="guidance/delta-lon-rad">
+      <!-- Delta longitude in radians -->
+      <function>
+        <difference>
+          <property> guidance/target_wp_longitude_rad </property>
+          <property> position/long-gc-rad </property>
+        </difference>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="guidance/heading-to-waypoint-rad">
+      <!--
+      The heading in radians to a specified waypoint, given the
+      current position.
+      -->
+      <function>
+        <atan2> <!-- atan2 (deltaY, deltaX )-->
+          <product>
+            <sin><property> guidance/delta-lon-rad </property></sin>
+            <cos><property> guidance/target_wp_latitude_rad </property></cos>
+          </product>
+          <difference>
+            <product>
+              <cos><property> position/lat-gc-rad </property></cos>
+              <sin><property> guidance/target_wp_latitude_rad </property></sin>
+            </product>
+            <product>
+              <sin><property> position/lat-gc-rad </property></sin>
+              <cos><property> guidance/target_wp_latitude_rad </property></cos>
+              <cos><property> guidance/delta-lon-rad </property></cos>
+            </product>
+          </difference>
+        </atan2>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="guidance/wp-distance-a">
+      <!--
+      This is an intermediate distance calculation between
+      the current location and the specified waypoint.
+      -->
+      <function>
+        <sum>
+          <pow>
+            <sin>
+              <quotient>
+                <property> guidance/delta-lat-rad </property>
+                <value> 2.0 </value>
+              </quotient>
+            </sin>
+            <value>2</value>
+          </pow>
+          <product>
+            <cos>
+              <property> position/lat-gc-rad </property>
+            </cos>
+            <cos>
+              <property> guidance/target_wp_latitude_rad </property>
+            </cos>
+            <pow>
+              <sin>
+                <quotient>
+                  <property> guidance/delta-lon-rad </property>
+                  <value> 2.0 </value>
+                </quotient>
+              </sin>
+              <value>2.0</value>
+            </pow>
+          </product>
+        </sum>
+      </function>
+    </fcs_function> 
+
+    <fcs_function name="guidance/wp-distance">
+      <!--
+        This is the final distance calculation between the current location and
+        the specified waypoint. If you want this calculation to output in units
+        other than feet, changed the notated value below to the radius of the
+        Earth given in your units of choice.
+      -->
+      <function>
+        <product>
+          <value> 2.0 </value>
+          <atan2>
+            <pow>
+              <property> guidance/wp-distance-a </property>
+              <value> 0.5 </value>
+            </pow>
+            <pow>
+              <difference>
+                <value> 1.0 </value>
+                <property> guidance/wp-distance-a </property>
+              </difference>
+              <value> 0.5 </value>
+            </pow>
+          </atan2>
+          <value> 21144000 </value> <!-- radius of the Earth in feet -->
+        </product>
+      </function>
+    </fcs_function> 
+
+    <summer name="guidance/heading-to-waypoint-positive">
+      <input> guidance/heading-to-waypoint-rad </input>
+      <bias> 6.283 </bias>
+    </summer>
+
+    <switch name="guidance/wp-heading-rad">
+      <default value="guidance/heading-to-waypoint-positive"/>
+      <test value="guidance/heading-to-waypoint-rad">
+        guidance/heading-to-waypoint-rad gt 0.0
+      </test>
+    </switch>
+
+    <pure_gain name="guidance/wp-heading-deg">
+      <input> guidance/wp-heading-rad </input>
+      <gain> 57.3 </gain>
+    </pure_gain>
+
+  </channel>
+
+  <!--######################################################################## -->
+  
+  <property> guidance/center_orbit_latitude_rad </property>
+  <property> guidance/center_orbit_longitude_rad </property>
+  <property value="0.00001"> guidance/korbit </property> <!--set by default but can be defined in the main spcript as well.
+															It defines the convergence of the orbit-->
+  <property> guidance/orbit-radius </property>
+  <property> guidance/direction </property>
+
+  
+
+  <channel name="Guidance Orbit Heading Director">
+
+    <fcs_function name="guidance/delta-orbit-lat-rad">
+      <function>
+        <difference>
+          <property> guidance/center_orbit_latitude_rad </property>
+          <property> position/lat-gc-rad </property>
+        </difference>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="guidance/delta-orbit-lon-rad">
+      <function>
+        <difference>
+          <property> guidance/center_orbit_longitude_rad </property>
+          <property> position/long-gc-rad </property>
+        </difference>
+      </function>
+    </fcs_function>
+
+
+	<fcs_function name="guidance/orbit-distance-a">
+      <function>
+        <sum>
+          <pow>
+            <sin>
+              <quotient>
+                <property> guidance/delta-orbit-lat-rad </property>
+                <value> 2.0 </value>
+              </quotient>
+            </sin>
+            <value>2</value>
+          </pow>
+          <product>
+            <cos>
+              <property> position/lat-gc-rad </property>
+            </cos>
+            <cos>
+              <property> guidance/center_orbit_latitude_rad </property>
+            </cos>
+            <pow>
+              <sin>
+                <quotient>
+                  <property> guidance/delta-orbit-lon-rad </property>
+                  <value> 2.0 </value>
+                </quotient>
+              </sin>
+              <value>2.0</value>
+            </pow>
+          </product>
+        </sum>
+      </function>
+    </fcs_function> 
+
+    <fcs_function name="guidance/orbit-distance">
+      <function>
+        <product>
+          <value> 2.0 </value>
+          <atan2>
+            <pow>
+              <property> guidance/orbit-distance-a </property>
+              <value> 0.5 </value>
+            </pow>
+            <pow>
+              <difference>
+                <value> 1.0 </value>
+                <property> guidance/orbit-distance-a </property>
+              </difference>
+              <value> 0.5 </value>
+            </pow>
+          </atan2>
+          <value> 21144000 </value>
+        </product>
+      </function>
+    </fcs_function> 
+
+    <fcs_function name="guidance/course-angle-rad">
+      <function>
+        <atan2> 
+          <product>
+            <sin><property> guidance/delta-orbit-lon-rad </property></sin>
+            <cos><property> guidance/center_orbit_latitude_rad </property></cos>
+          </product>
+          <difference>
+            <product>
+              <cos><property> position/lat-gc-rad </property></cos>
+              <sin><property> guidance/center_orbit_latitude_rad </property></sin>
+            </product>
+            <product>
+              <sin><property> position/lat-gc-rad </property></sin>
+              <cos><property> guidance/center_orbit_latitude_rad </property></cos>
+              <cos><property> guidance/delta-orbit-lon-rad </property></cos>
+            </product>
+          </difference>
+        </atan2>
+      </function>
+    </fcs_function>
+		
+	<fcs_function name="guidance/orbit-error">
+		<function>
+			<quotient>
+				<difference>
+					<property> guidance/orbit-distance </property>
+					<property> guidance/orbit-radius </property>
+				</difference>
+				<property> guidance/orbit-radius </property>
+			</quotient>
+		</function>
+	</fcs_function>
+	
+	<fcs_function name="guidance/heading-orbit-rad-a">
+		<function>
+			<atan>
+				<product>
+					<property> guidance/korbit </property>
+					<property> guidance/orbit-error </property>			
+				</product>
+			</atan>
+		</function>
+	</fcs_function>
+	
+	<fcs_function name="guidance/heading-orbit-rad-b">
+		<function>
+			<product>
+				<property> guidance/direction </property>
+				<sum>
+					<value> 1.570796327 </value>
+					<property> guidance/heading-orbit-rad-a </property>
+				</sum>
+			</product>
+		</function>
+	</fcs_function>
+	
+	<fcs_function name="guidance/heading-orbit-rad">
+		<function>
+			<difference>
+				<value> 1.570796327 </value>
+				<sum>
+					<property> guidance/course-angle-rad </property>
+					<property> guidance/heading-orbit-rad-b </property> 
+				</sum>
+			</difference>
+		</function>
+	</fcs_function>
+
+    <summer name="guidance/heading-orbit-positive">
+      <input> guidance/heading-orbit-rad </input>
+      <bias> 6.283 </bias>
+    </summer>
+
+    <switch name="guidance/orbit-heading-rad">
+      <default value="guidance/heading-orbit-positive"/>
+      <test value="guidance/heading-orbit-rad">
+        guidance/heading-orbit-rad gt 0.0
+      </test>
+    </switch>
+
+    <pure_gain name="guidance/orbit-heading-deg">
+      <input> guidance/orbit-heading-rad </input>
+      <gain> 57.3 </gain>
+    </pure_gain>
+ 
+  </channel>
+
+  
+<!-- ####################################################################### -->
+
+  <property> navigation/actual-heading-rad </property>
+  <property> guidance/specified-heading-rad </property>
+  <property> guidance/heading-selector-switch </property>
+
+  <channel name="Included Angle to Heading">
+
+    <switch name="guidance/selected_target_heading">
+      <default value="guidance/wp-heading-rad"/>
+      <test value="guidance/specified-heading-rad">
+        guidance/heading-selector-switch eq 1
+      </test>
+	  <test value="guidance/orbit-heading-rad">
+        guidance/heading-selector-switch eq 2
+      </test>
+    </switch>
+
+    <fcs_function name="guidance/x1">
+      <function>
+        <cos><p> navigation/actual-heading-rad </p></cos>
+      </function>
+    </fcs_function>
+  
+    <fcs_function name="guidance/y1">
+      <function>
+        <sin><p> navigation/actual-heading-rad </p></sin>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="guidance/x2">
+      <function>
+        <cos><p> guidance/selected_target_heading </p></cos>
+      </function>
+    </fcs_function>
+  
+    <fcs_function name="guidance/y2">
+      <function>
+        <sin><p> guidance/selected_target_heading </p></sin>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="guidance/angle-to-heading-rad">
+      <function>
+        <acos>
+          <sum>
+            <product>
+              <p>guidance/x1</p>
+              <p>guidance/x2</p>
+            </product>
+            <product>
+              <p>guidance/y1</p>
+              <p>guidance/y2</p>
+            </product>
+          </sum>
+        </acos>
+      </function>
+    </fcs_function>
+	
+	<pure_gain name="guidance/angle-to-heading-deg">
+      <input> guidance/angle-to-heading-rad </input>
+      <gain> 57.3 </gain>
+    </pure_gain>
+
+    <fcs_function name="guidance/x1y2">
+      <function>
+        <product>
+          <p> guidance/x1 </p>
+          <p> guidance/y2 </p>
+        </product>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="guidance/x2y1">
+      <function>
+        <product>
+          <p> guidance/x2 </p>
+          <p> guidance/y1 </p>
+        </product>
+      </function>
+    </fcs_function>
+
+    <switch name="guidance/angle-to-heading-sense">
+      <default value="-1"/>
+      <test value="1">
+        guidance/x1y2 gt guidance/x2y1
+      </test>
+    </switch>
+
+  </channel>
+
+<!-- ####################################################################### -->
+
+</system>
