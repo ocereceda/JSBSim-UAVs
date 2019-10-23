@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="Trim in Cruise configuration">
+
+  <description>
+Simple test where the airspeed is trimmed
+  </description>
+
+  <use aircraft="GBS_1" initialize="reset00"/>
+  <run start="0" end="1" dt="0.00833333">
+
+    <!-- 
+	  Specify the initial conditions for the test if
+	  different than in the initialize script, and
+	  trim the aircraft.
+	-->
+    <event name="Trim">
+      <condition> simulation/sim-time-sec ge 0.0 </condition>
+      <set name="ic/vc-kts" value="30.0"/>
+      <set name="simulation/do_simple_trim" value="1"/>
+    </event>
+
+  </run>
+
+</runscript>

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<initialize name="reset03">
+
+  <vc unit="KTS"> 38.87689112646 </vc>
+  <longitude unit="DEG"> -53.91752033  </longitude>
+  <latitude unit="DEG">   48.2778129  </latitude>
+  <phi unit="DEG">         0.0  </phi> <!-- Roll -->
+  <theta unit="DEG">       0.0  </theta> <!-- Pitch -->
+  <psi unit="DEG">       0.0  </psi> <!-- Yaw -->
+  <altitude unit="FT">     600  </altitude>
+  <hwind> 0.0 </hwind>
+</initialize>
