@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<initialize name="ini00">
+
+  <vc unit="FTS"> 50.0 </vc>
+  <latitude unit="DEG">   47.0  </latitude>
+  <longitude unit="DEG"> 122.0  </longitude>
+  <phi unit="DEG">         0.0  </phi>
+  <theta unit="DEG">       0.0  </theta>
+  <psi unit="DEG">       150.0  </psi>
+  <altitude unit="FT">     350.0  </altitude>
+  <winddir unit="DEG">   0.0  </winddir>
+  <vwind unit="FT/SEC">   0.0  </vwind>
+</initialize>
