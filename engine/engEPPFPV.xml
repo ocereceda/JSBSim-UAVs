@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+
+<electric_engine name="engEPPFPV">
+  <power unit="WATTS"> 370.0 </power>
+
+</electric_engine>

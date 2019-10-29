@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!-- Zenoah G-26A -->
+<!-- 2.96 hp engine (2.4hp)-->
+<!-- one horsepower equals 745.69987 Watts ()-->
+
+<electric_engine name="electric_1mw">
+  <power unit="WATTS">  1789.68 </power>
+</electric_engine>
