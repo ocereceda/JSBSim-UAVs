@@ -1,4 +1,4 @@
-# JSBSim-for-SAA
+# JSBSim-UAVs
 #XML, JSBSim: https://github.com/JSBSim-Team/jsbsim
 
 This repository includes the aircraft models used for studying collision avoidance between manned and unmanned aircraft
