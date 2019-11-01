@@ -15,3 +15,5 @@ UAV development in JSBSim: https://research.library.mun.ca/13798/
 Giant Big Stik validation using JSBSim: https://www.mdpi.com/2504-446X/3/2/48
 
 Manned aircraft applications: https://ieeexplore.ieee.org/document/8447588
+
+Context and research: http://www.cs.mun.ca/~occ356/research.html
