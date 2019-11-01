@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSimSystem.xsd">
 
-<!-- #######################################################################
+<!-- #####################################################################
   Author:   Jon Berndt
   Date:     January 2009
   Function: Calculates useful GNC values
