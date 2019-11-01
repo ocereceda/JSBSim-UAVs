@@ -8,7 +8,7 @@
 Test - April 16th 2018
   </description>
 
-  <use aircraft="GBS_3" initialize="reset03"/>
+  <use aircraft="GBS_3" initialize="ini03"/>
   <run start="0" end="45" dt="0.02">
 
     <event name="Set engine throttle">
