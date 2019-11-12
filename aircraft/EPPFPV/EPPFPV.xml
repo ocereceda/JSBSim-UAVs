@@ -33,12 +33,12 @@
   </metrics>
 
   <mass_balance>
-    <ixx unit="SLUG*FT2"> 0.03419 </ixx>
-    <iyy unit="SLUG*FT2"> 0.05315 </iyy>
-    <izz unit="SLUG*FT2"> 0.07055 </izz>
-    <ixy unit="SLUG*FT2"> -0 </ixy>
-    <ixz unit="SLUG*FT2"> -0 </ixz>
-    <iyz unit="SLUG*FT2"> -0 </iyz>
+    <ixx unit="SLUG*FT2"> 0.03712 </ixx>
+    <iyy unit="SLUG*FT2"> 0.01254 </iyy>
+    <izz unit="SLUG*FT2"> 0.09544 </izz>
+    <ixy unit="SLUG*FT2"> 0 </ixy>
+    <ixz unit="SLUG*FT2"> 0.006720 </ixz>
+    <iyz unit="SLUG*FT2"> 0 </iyz>
     <emptywt unit="LBS"> 4.4 </emptywt>
     <location name="CG" unit="IN">
       <x> 16.54 </x>
